@@ -115,7 +115,8 @@ public abstract class BaseParser
     private static final byte ASCII_ZERO = 48;
     private static final byte ASCII_NINE = 57;
     private static final byte ASCII_SPACE = 32;
-    
+
+    // 主要有两个成员变量：一个是用于读取的输入流；一个是要解析的document对象。方法一般是作用在这两个成员变量上。
     /**
      * This is the stream that will be read from.
      */
@@ -150,7 +151,7 @@ public abstract class BaseParser
      */
     private COSBase parseCOSDictionaryValue() throws IOException
     {
-        long numOffset = seqSource.getPosition();
+        long numOffset = seqSource.getPosition();  // 实现逻辑在子类中，主要是用于定位要读取的文件开始位置
         COSBase value = parseDirObject();
         skipSpaces();
         // proceed if the given object is a number and the following is a number as well
@@ -186,6 +187,7 @@ public abstract class BaseParser
             return COSNull.NULL;
         }
         // dereference the object
+        // 表示识别出来一个object的引用，所以需要从object 的池子里面，把真正的object识别出来
         return getObjectFromPool(new COSObjectKey(objNumber, genNumber));
     }
 
@@ -856,6 +858,7 @@ public abstract class BaseParser
      *
      * @throws IOException If there is an error during parsing.
      */
+    // 这个方法可能会递归调用，所以最后一层的dir value 就可以是各种类型
     protected COSBase parseDirObject() throws IOException
     {
         skipSpaces();
@@ -909,6 +912,7 @@ public abstract class BaseParser
         case (char)-1:
             return null;
         default:
+            // 判断是否是数字，然后对数字进行解析
             if( Character.isDigit(c) || c == '-' || c == '+' || c == '.')
             {
                 return parseCOSNumber();
@@ -1237,7 +1241,7 @@ public abstract class BaseParser
      */
     protected void skipSpaces() throws IOException
     {
-        int c = seqSource.read();
+        int c = seqSource.read();   // 读取一个字符，注意返回的是int类型
         // 37 is the % character, a comment
         while( isWhitespace(c) || c == 37)
         {

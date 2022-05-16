@@ -283,6 +283,7 @@ public class PDFTextStripper extends LegacyPDFStreamEngine
             endBookmarkPageNumber = 0;
         }
 
+        // 这里会重写PDPageTree 的 iterator 方法，便于直接从 pagetree 里面来读取page的信息。
         for (PDPage page : pages)
         {
             currentPageNo++;
